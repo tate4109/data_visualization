@@ -1,0 +1,189 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+## Emily Tate
+
+#Ch. 3: Data Visualization
+```{r}
+library(tidyverse) #only need to install a package once; then it needs to be reloaded every time you start a new session
+ggplot2::mpg
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+3.2.3
+```{r}
+#going to turn code into a reusable template for making graphs
+ggplot(data = mpg) # shows dotplot with engine displacement on x-axis and highway miles per gallon on y-axis 
+# There are 234 rows and 11 columns.
+?mpg
+#drv descibes the wheel drive. f = front-wheel drive, r = rear wheel drive, 4 = 4wd
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = cyl, y = hwy))#Make a scatterplot of hwy vs cyl
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = class))#If you make a scatterplot of class vs drv the plot is not useful because it is dividing the axis information by car type and does not give us information regarding highway miles per gallon.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class)) #size for class is a messy idea
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue") # makes data points blue
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue") #this code is wrong because the color was listed outside the parenthesis when it should be inside
+#Categorical variables: car type, year of manufacture, number of cylinders, type of transmission, fuel type 
+#Continuous variables: highway miles per gallon, engine displacement, city miles per gallon
+#Categorical data is in columns while the continuous cases are in rows.
+#Typing mpg shows the data set. A ? in front of the data set will pull up the help page with a description of the data and information on the abbreviations used.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class, shape = class)) #the varible "class" is being mapped to color and shape
+?geom_point
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class, shape = class, stroke = 1)) #stroke changes the size of the variable graphics
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = displ < 5)) #when an aethetic is mapped to something other than a variable name the graph plots the data as True/ False in response to the statement
+##3.5 Facets
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~ class, nrow = 2) #facet plot by a single variable
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ cyl) #facet plot on the combination of two variables
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = drv, y = cyl)) #the cells show different options od wheels used to drive
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(drv ~ .)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_grid(. ~ cyl) # the . separates the rows by variable so that the data is on seperate graphs
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~ class, nrow = 2) #faceting breaks it down into separate categoies so that they can be compared as opposed to having all the data on one graph with distinctions by color.
+?facet_wrap # nrow and ncol change the number of rows and columns. facet_grid() doesn't have these features beacuse the entire graph could not be broken into different numbers of rows and columns without it being wrapped
+#When using facet_grid() the variable with more unique levels should be in the columns
+#A geom is the geometrical object that a plot uses to represent data. Ex. there can be lines, bar charts, and points.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) #dots
+
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy)) #smooth line
+
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv)) #separates the cars into three lines based on their drv value
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+              
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+    
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, color = drv),
+    show.legend = FALSE
+  )
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))#displays multiple geoms in the same plot, add multiple geom functions
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth() #display different aesthetics in different layers
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth(data = filter(mpg, class == "subcompact"), se = FALSE)
+##3.6.1
+#bar charts use bar geoms, line charts use line geoms, boxplots use boxplot geoms, and scatterplots break the trend use the point geom
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+# the command "show.legend = FALSE" removes the legend. If we don't include that piece of code the legend will show on the plot.
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth() #this graph looks the same as....
+
+ggplot() + 
+  geom_point(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_smooth(data = mpg, mapping = aes(x = displ, y = hwy)) #this graph!
+##3.7
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut)) #back to the diamonds
+ggplot(data = diamonds) + 
+  stat_count(mapping = aes(x = cut))
+demo <- tribble(
+  ~cut,         ~freq,
+  "Fair",       1610,
+  "Good",       4906,
+  "Very Good",  12082,
+  "Premium",    13791,
+  "Ideal",      21551
+)
+
+ggplot(data = demo) +
+  geom_bar(mapping = aes(x = cut, y = freq), stat = "identity")
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1)) #displays a bar chart of proportion, rather than count
+ggplot(data = diamonds) + 
+  stat_summary(
+    mapping = aes(x = cut, y = depth),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  ) #summarises the y values for each unique x value, to draw attention to the summary that you’re computing
+?stat_summary()
+#stat_summary() makes boxplots
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 1/5, position = "identity")
+# no package called ‘viridisLite’.. tried to install package and it wouldn't load.. error message "doesn't exist"
+ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
+  geom_bar(fill = NA, position = "identity")
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+ggplot(data = mpg, mapping = aes(x = cty, y = hwy)) + 
+  geom_point() #this plot is missing a legend or distinction by name of city or maybe more spacing
+?geom_jitter()
+#this data set adds a small amount of random variation to the location of each point, and is a useful way of handling overplotting caused by discreteness in smaller datasets.
+#geom_jitter() adds variation while geom_count() creates a graph that reflects the exact data points
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(x = cyl, y = hwy, group = cyl))#The default position adjustment for geom_boxplot() is to the lowest value of the x-axis
+##3.9
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() +
+  coord_flip() #The default coordinate system is the Cartesian coordinate system where the x and y positions act independently to determine the location of each point
+nz <- map_data("nz")
+
+ggplot(nz, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black")
+
+ggplot(nz, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black") +
+  coord_quickmap()# sets the aspect ratio correctly for maps --> good for spatial data
+bar <- ggplot(data = diamonds) + 
+  geom_bar(
+    mapping = aes(x = cut, fill = cut), 
+    show.legend = FALSE,
+    width = 1
+  ) + 
+  theme(aspect.ratio = 1) +
+  labs(x = NULL, y = NULL)
+
+bar + coord_flip() #there is no package called ‘viridisLite'
+bar + coord_polar()
+
+##3.10 
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(
+     mapping = aes(<MAPPINGS>),
+     stat = <STAT>, 
+     position = <POSITION>
+  ) +
+  <COORDINATE_FUNCTION> +
+  <FACET_FUNCTION> #code template w/ 7 parameters
+  
+```
